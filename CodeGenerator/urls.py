@@ -7,5 +7,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'apps.website.views.home', name='home'),
     url(r'^account/', include(aurls)),
+    url(r'^captcha/', include('captcha.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

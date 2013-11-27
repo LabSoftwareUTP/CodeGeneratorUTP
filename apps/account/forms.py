@@ -1,8 +1,15 @@
 #encoding:utf-8
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from apps.account.validators import validate_email_unique
+from captcha.fields import CaptchaField
+
+
+class LoginCaptchaForm(AuthenticationForm):
+    captcha = CaptchaField()
+
 
 
 class RegisterForm(UserCreationForm):
@@ -27,10 +34,10 @@ class RegisterForm(UserCreationForm):
 
 
 class UserForm(forms.ModelForm):
-    email = forms.EmailField(label="* Correo Electrónico", required=False, validators=[], widget=forms.TextInput(attrs={'placeholder': 'Email', "class": "form-control", 'type': 'email'}))
-    # username = forms.CharField(label="Nombre de usuario", widget=forms.TextInput(attrs={'placeholder': 'Username', "class": "form-control"}))
-    first_name = forms.CharField(label="* Nombre", widget=forms.TextInput(attrs={'placeholder': 'Nombre', "class": "form-control", "autofocus": "true"}))
+    username = forms.CharField(label="* Nombre de usuario", widget=forms.TextInput(attrs={'placeholder': 'Username', "class": "form-control", "autofocus": "true"}))
+    first_name = forms.CharField(label="* Nombre", widget=forms.TextInput(attrs={'placeholder': 'Nombre', "class": "form-control"}))
     last_name = forms.CharField(label="* Apellido", widget=forms.TextInput(attrs={'placeholder': 'Apellido', "class": "form-control"}))
+    email = forms.EmailField(label="* Correo Electrónico", required=False, validators=[], widget=forms.TextInput(attrs={'placeholder': 'Email', "class": "form-control", 'type': 'email'}))
 
     class Meta:
         model = User

@@ -1,5 +1,5 @@
 #encoding:utf-8
-from django.shortcuts import render_to_response
+from django.shortcuts import render, render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext  
 #Django Auth
@@ -9,7 +9,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_complete, password_reset_confirm
 from django.core.urlresolvers import reverse
-from apps.account.forms import RegisterForm
+from apps.account.forms import RegisterForm, LoginCaptchaForm
 from .send_email import sendEmailHtml
 from hashlib import sha256 as sha_constructor
 from django.contrib.auth.models import User
@@ -18,7 +18,7 @@ import random
 
 @login_required()
 def personal_data(request):
-    return render_to_response('personal_data.html', context_instance=RequestContext(request))
+    return render(request, 'personal_data.html')
 
 
 @login_required()
@@ -214,10 +214,20 @@ def log_in(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
+            del request.session['LOGIN_TRIES']
             return userLogin(request, request.POST['username'], request.POST['password'])
+        else:
+            LOGIN_TRIES = request.session.get('LOGIN_TRIES')
+            print request.session.get_expiry_age()
+            if LOGIN_TRIES:
+                request.session['LOGIN_TRIES'] = LOGIN_TRIES + 1
+            else:
+                request.session['LOGIN_TRIES'] = 1
+            if LOGIN_TRIES >= 3:
+                form = LoginCaptchaForm(data=request.POST)
     else:
         form = AuthenticationForm()
-    return render_to_response('login.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'login.html', locals())
 
 
 @login_required()
