@@ -212,13 +212,16 @@ def log_in(request):
     if not request.user.is_anonymous():
         return HttpResponseRedirect(reverse("personal_data"))
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        print request.POST
+        if "captcha_0" in request.POST:
+            form = LoginCaptchaForm(data=request.POST)
+        else:
+            form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             del request.session['LOGIN_TRIES']
             return userLogin(request, request.POST['username'], request.POST['password'])
         else:
             LOGIN_TRIES = request.session.get('LOGIN_TRIES')
-            print request.session.get_expiry_age()
             if LOGIN_TRIES:
                 request.session['LOGIN_TRIES'] = LOGIN_TRIES + 1
             else:
