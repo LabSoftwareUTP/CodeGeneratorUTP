@@ -1,0 +1,25 @@
+{% load gravatartag i18n %}
+<div class="container">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/"><img src="{{ STATIC_URL }}img/logo.png" alt="" width="18px"> {{ PROJECT_NAME }}</a>
+  </div>
+  <div class="collapse navbar-collapse">
+      {% if user.is_authenticated %}
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="{% url 'personal_data' %}">{{ user.username }}
+           <img src="{{ user.email|showgravatar:'18'}}" width="18px" />
+          </a>
+        </li>
+        <li class="btn-account">
+          <a href="{% url 'logout' %}" class="alert-link">{% trans "Cerrar sesi&oacute;n" %}</a>
+        </li>
+      </ul>
+    {% endif %}
+  </div><!--/.nav-collapse -->
+</div>

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load gravatartag i18n %}
+{% block title %}{% trans 'Cuenta de Usuario' %}{% endblock %}
+{% block content %}
+<div>
+    <div class="uTop">
+        <img src="{{ user.email|showgravatar:'32'}}" width="32px" />
+        Hola
+        <strong>
+            <a href="{% url 'personal_data' %}">
+                {{ user.first_name }} ({{user.username}})
+            </a>
+        </strong>
+    </div>
+    <hr>
+    <div class="box-container">
+        <form method="POST"  action="{% url 'update_personal_data' %}">
+            {% csrf_token %}
+            <table class="table table-hover table-condensed table-striped table-bordered">
+                <tr>
+                    <th colspan="2" class="text-center">Tus datos </th>
+                </tr>
+                {% if user_form  %}
+                    {{ user_form }}
+                {% else %}
+                    <tr>
+                        <th>Nombres/Apellidos</th>
+                        <td>
+                        {{ user.get_full_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Correo Electr&oacute;nico</th>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="2" class="gravatar"><img src="{{ user.email|showgravatar:'28'}}" alt="Avatar" width="28px"> Cambia tu avatar en <a href="http://gravatar.com/" target="_blank">Gravatar.com</a>.</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="">
+                        <a class="btn btn-warning" href="{% url 'change_password' %}">Cambiar contrase&ntilde;a</a>
+                            {% if user_form %}
+                            <button type="submit" class="btn btn-success pull-right">Actualizar Datos</button>
+                            {% else %}
+                            <a href="{% url 'update_personal_data' %}" class="btn btn-success pull-right">Editar datos</a>
+                            {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <!--<p class=""><strong>Nota:</strong> Todos los datos son de caracter obligatorio.</p>-->
+        </form>
+    </div>
+    <div  class="box-container">
+        <hr>
+        <p>Eres miembro desde el {{ user.date_joined }} </p>
+        <p>Ultimo logueo: {{ user.last_login}}.</p>
+    </div>
+</div>
+
+{% endblock%}
+
+
+
+{% block style %}
+<style>
+    
+</style>
+{% endblock %}
+
+{% block js %}
+<script>
+	$(document).on("ready", function() {
+		$("#settings-personal-data").addClass("active");
+	});
+    {% if update %}
+    setAlertMessage("Datos Actualizados","Tus datos fueron actualizados correctamente")
+    {% endif %}
+    {% if passwordUpdate %}
+    setAlertMessage("Constrase&ntilde;a Actualizada","Tu constrase&ntilde;a fue actualizada correctamente")
+    {% endif %}
+
+</script>
+{% endblock %}

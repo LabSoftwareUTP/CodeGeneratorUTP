@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+URL_BASE = "http://localhost:8000"
+PROJECT_NAME = "CodeGenerator"
+PROJECT_DESCRIPTION = ""
+
+LOGIN_URL = "/account/login"
+LOGOUT_URL = "/account/logout"
+LOGIN_REDIRECT_URL = "/"
+FROM_EMAIL = PROJECT_NAME + " <no-reply@daiech.com>"
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -36,6 +45,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apps.website',
+    'apps.account'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,9 +76,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -80,3 +91,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.sep.join([os.path.dirname(os.path.dirname(__file__)), 'public/static']),
+)
+
+TEMPLATE_DIRS = (
+    os.sep.join([os.path.dirname(os.path.dirname(__file__)), 'templates']),
+)
+
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    'django.core.context_processors.request',
+    'apps.website.context_processors.get_project_name',
+)

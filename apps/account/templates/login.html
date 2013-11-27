@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans 'Iniciar Sesi&oacute;n' %}{% endblock %}
+
+{%block content%}
+<article class="message-box white-box-container">
+        <h3>{% trans 'Iniciar Sesi&oacute;n' %}</h3>
+        <p>{% trans 'Ingresa tus datos de usuario para acceder a tu cuenta' %}</p>
+        <form name="" action="" method="POST" id="" class="form-horizontal mt20">
+            {% csrf_token %}
+            <div class="control-group">
+                <table>{{ form }}</table>
+            </div>
+            <div class="control-group t-a-c">
+                <div class="controls">
+                    <label class="checkbox">
+                        <!--<input type="checkbox">Recordarme</a>-->
+                    </label>
+                    <div class="">
+                        <button type="submit" name="submit" id="id_submit" class="btn btn-info btn-large">{% trans 'Inicia sesi&oacute;n' %}</button>
+                        <a href="/account/new" class="btn btn-link">{% trans 'Registrarse' %}</a><br>
+                        <a href="/account/password/reset/" class="btn btn-link mt20">{% trans '&iquest;Olvidaste tu contrase&ntilde;a?' %}</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+</article>
+{%endblock%}

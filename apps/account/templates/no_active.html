@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans 'Usuario no activo' %}{% endblock %}
+{%block content %}		
+	<article class="message-box white-box-container">
+		<h3>{% trans 'Usuario inactivo!' %}</h3>
+		<p>{% trans 'El usuario no se encuentra activo en el momento' %}</p>
+		<p>{% trans 'Para activar la cuenta, debes ingresar al link de activaci&oacute;n que ha sido enviado al correo electr&oacute;nico asociado a &eacute;sta cuenta' %}</p>
+	</article>
+{% endblock%}
