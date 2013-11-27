@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-URL_BASE = "http://localhost:8000"
+try:
+    from .local_settings import URL_BASE
+except:
+    URL_BASE = "http://localhost:8000"
 PROJECT_NAME = "CodeGenerator"
 PROJECT_DESCRIPTION = ""
 
@@ -29,7 +31,10 @@ FROM_EMAIL = PROJECT_NAME + " <no-reply@daiech.com>"
 SECRET_KEY = '3rv0q_86ep=z7e%-n@o&agu6g&spgx=931=7upb&h9ha8ht=z6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    from .local_settings import DEBUG
+except
+    DEBUG = True
 
 TEMPLATE_DEBUG = True
 
