@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Registro{% endblock %}
+{%block content %}
+<article class="message-box white-box-container">
+        <h3>Registro de Usuario</h3>
+        <p class="lead">llena el siguiente formulario para registrarte en <strong>{{ PROJECT_NAME }}</strong></p>
+        <form class="form-horizontal" method="POST">
+            {% csrf_token %}
+            <table>{{ form }}</table>
+            <div class="control-group t-a-c mt20">
+                <div class="controls">
+                    <label class="checkbox">
+                        <input type="checkbox" name="term_privacy" id="term_privacy"> Acepto los <a href="/{{URL_TERMS}}" target="_blank">T&eacute;rminos de uso</a> y las <a href="/{{URL_PRIVACY}}" target="_blank">Pol&iacute;ticas de privacidad</a>
+                    </label>
+                    <div class="mt20">
+                        <button type="submit" class="btn btn-info btn-large" id="btn-submit">Registrarse</button>
+                        <a href="/account/login" class="btn btn-link">Iniciar Sesi&oacute;n</a><br />
+                    </div>
+                </div>
+            </div>
+        </form>
+</article>
+{%endblock%}

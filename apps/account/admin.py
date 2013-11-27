@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.account.models import *
+
+admin.site.register(activation_keys)  # aca registramos nuestro modelo con el admin de django

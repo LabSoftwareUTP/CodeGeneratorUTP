@@ -1,0 +1,16 @@
+{% load i18n %}
+{% autoescape off %}
+<table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/19px 'Helvetica Neue',Arial,Helvetica">
+	<tbody>
+		<tr width="100%"> 
+			<td valign="top" align="left" style="background:url(http://actarium.com/static/img/debut_light.png) #eef0f1;font:15px/19px 'Helvetica Neue',Arial,Helvetica">
+				<table style="border:none;padding:0 18px;margin:20px auto;width:700px"> 
+					<tbody style="border:1px solid #d9edf7">
+						{% block emaildata%}{% endblock%}
+					</tbody> 
+				</table>
+			</td>
+		</tr>
+	</tbody> 
+</table>
+{% endautoescape %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block TITLE %}Link no valido{% endblock %}
+{%block content %}		
+	<article class="message-box white-box-container">
+		<h3>Link no v&aacute;lido!</h3>
+		<p>El link al que ingresaste ya no es v&aacute;lido.</p>
+		<p>Si deseas iniciar sesi&oacute;n ingresa a <a href="{% url 'home' %}">Iniciar sesi&oacute;n</a></p>
+		<p>Si olvidaste tu contrase&ntilde;a utiliza la <a href="{% url 'password_reset2' %}">opci&oacute;n de recuperaci&oacute;n de contrase&ntilde;a</a></p>
+
+		<p><a href="{% url 'home' %}">ir al inicio</a></p>
+	</article>
+{% endblock%}
+{%block style%}
+<style>
+	article.white-box-container{min-height: 160px;display: block;margin: 0 auto;width: 50%;}
+</style>
+{%endblock%}

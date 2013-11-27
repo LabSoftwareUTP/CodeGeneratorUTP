@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block TITLE %}Cuenta activada{% endblock %}
+{%block content %}		
+	<article class="message-box white-box-container">
+		<h3>Cuenta activada!</h3>
+		<p>Tu cuenta ha sido activada satisfactoriamente, ya puedes disfrutar de las funcionalidades de <strong>{{ PROJECT_NAME }}</strong>.</p>
+		{% if invited %}
+		<div class="change-pass">
+			<div class="alert alert-warning">
+			  <strong>Atenci&oacute;n!</strong> Hemos generado una contraseña temporal para el inicio de tu sesi&oacute;n, para mayor seguridad debes cambiarla inmediatamente en tu <a href="{% url 'change_password' %}">configuraci&oacute;n de cuenta</a>.
+			</div>
+		</div>
+		{% endif %}
+		<p><a href="{% url 'home' %}">ir al inicio</a></p>
+		<!-- <p>Si tienes dudas, sugerencias, preguntas o quieres reportar un error, puedes hacerlo a trav&eacute;s del m&oacute;dulo <a href="#" id="callFeed">FeedBack</a> que esta disponible a la derecha en todas las ventanas</p> -->
+	</article>
+{% endblock%}
+{%block style%}
+<style>
+	article.white-box-container{min-height: 160px;display: block;margin: 0 auto;width: 50%;}
+	article .menu-icons{float: left;margin-right: 5px;}
+	article p{margin-bottom: 20px;}
+	.change-pass{margin-bottom: 20px;}
+</style>
+{%endblock%}
