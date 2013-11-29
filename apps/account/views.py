@@ -218,7 +218,9 @@ def log_in(request):
         else:
             form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            del request.session['LOGIN_TRIES']
+            LOGIN_TRIES = request.session.get('LOGIN_TRIES')
+            if LOGIN_TRIES:
+                del request.session['LOGIN_TRIES']
             return userLogin(request, request.POST['username'], request.POST['password'])
         else:
             LOGIN_TRIES = request.session.get('LOGIN_TRIES')
