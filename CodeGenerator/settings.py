@@ -1,3 +1,4 @@
+#encoding:utf-8
 """
 Django settings for CodeGenerator project.
 
@@ -16,12 +17,17 @@ try:
 except:
     URL_BASE = "http://localhost:8000"
 PROJECT_NAME = "CodeGenerator"
-PROJECT_DESCRIPTION = ""
+PROJECT_DESCRIPTION = "Una plataforma diseñada Generar código rapido y fácil"
 
 LOGIN_URL = "/account/login"
 LOGOUT_URL = "/account/logout"
 LOGIN_REDIRECT_URL = "/"
 FROM_EMAIL = PROJECT_NAME + " <no-reply@daiech.com>"
+
+try:
+    from .local_settings import GMAIL_USER, GMAIL_USER_PASS
+except:
+    pass
 
 
 # Quick-start development settings - unsuitable for production
@@ -52,7 +58,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'apps.website',
     'apps.account',
-    'captcha'
+    'captcha',
+    'django_extensions'
 )
 
 MIDDLEWARE_CLASSES = (

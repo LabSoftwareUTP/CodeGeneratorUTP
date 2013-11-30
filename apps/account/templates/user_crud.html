@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% block title %}Administraci&oacute;n de usuarios{% endblock %}
+{% block content %}
+<div class="panel panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title pull-left">Gesti&oacute;n de usuarios</h3>
+		<div class="text-right">
+			<a  href="{% url 'admin_users' %}" title="" data-toggle="modal" class="btn btn-sm">
+		    </a>
+			<a  href="#newUserModal" title="" data-toggle="modal" class="btn btn-primary btn-sm">
+		    	<span class="glyphicon glyphicon-plus"></span> Agregar
+		    </a>
+		</div>
+	</div>
+	<div class="table-responsive">
+	<table id="dataTable" class="table table-hover table-condensed table-striped">
+		<thead>
+		<tr>
+			<th>Nombre de usuario</th>
+			<th>Nombres/Apellidos</th>
+			<th>Correo Electr&oacute;nico</th>
+			<th>Acciones</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for u in users %}
+		<tr id="user{{ u.pk }}">
+			<td>{{ u.username }}</td>
+			<td>
+			{{ u.get_full_name|title }}
+			</td>
+			<td>{{ u.email }}</td>
+			<td class="text-center actions">
+				<a href="{% url 'permission_login' u.id %}" title="Permitir {% if u.is_active %}de nuevo{% endif %} ingreso a la plataforma a {{ u.get_short_name }}" class="btn btn-can-login {% if u.is_active %}{% endif %}" data-pk="{{ u.pk }}"><span class="glyphicon glyphicon-log-in"></span></a>
+				<a href="{% url 'read_user' u.id %}" title="Ver infomaci&oacute;n completa" class="btn btn-view" data-pk="{{ u.pk }}"><span class="glyphicon glyphicon-eye-open"></span></a>
+				<a href="{% url 'update_user' u.id %}" title="Editar este usuario" class="btn"><span class="glyphicon glyphicon-pencil"></span></a>
+				<a href="{% url 'delete_user' u.id %}" title="Eliminar este usuario" class="btn btn-delete"><span class="glyphicon glyphicon-remove"></span></a>
+			</td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>
+
+<!-- Modal -->
+	<div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"> <!-- Ventana Modal para agregar un usuario. -->
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Usuario</h4>
+				</div>
+				<form method="POST"  enctype="multipart/form-data" id="ActivityForm" action="">
+				{% csrf_token %}
+				<input type="hidden" value="" name="next" id="next">
+				<input type="hidden" value="" name="pk_user" id="pkUser">
+				<div class="modal-body">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title pull-left">Gesti&oacute;n de usuarios</h3>
+							<div class="text-right">
+							{% if form_mode == '_update' %}
+								<a href="{% url 'delete_user' user_obj.pk %}" title="Eliminar este usuario" class="btn btn-danger btn-sm btn-delete"><span class="glyphicon glyphicon-remove"></span> Eliminar</a>
+							{% else %}
+							<a href="#" class="btn btn-primary btn-sm"  data-dismiss="modal">Cancelar</a>
+							{% endif %}
+							</div>
+						</div>
+						<table class="table table-hover table-condensed table-striped">
+						{{ user_form }}
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					{% if form_mode == "_create" %}
+					<button type="submit" class="btn btn-primary" name="_createanother">Guardar y agregar otro</button>
+					{% endif %}
+			        <button type="submit" class="btn btn-primary" name="_create">Guardar</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			    </div>
+			    </form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"> <!-- Ventana Modal para mostrar info de un usuario. -->
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Usuario</h4>
+				</div>
+				<form method="POST"  enctype="multipart/form-data" id="ActivityForm" action="">
+					<div class="modal-body">
+					</div>
+					<div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				    </div>
+			    </form>
+			</div>
+		</div>
+	</div>
+<!-- closeModal -->
+<!-- Show User Template -->
+	<div id="userTemplate" class="hidden">
+		{% templatetag openvariable %}=[[ ]]={% templatetag closevariable %}
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title pull-left">Gesti&oacute;n de usuarios</h3>
+				<div class="text-right">
+					<a href="[[ url_update ]]" title="Editar este usuario" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span> Editar</a>
+			   		<a href="[[ url_delete ]]" title="Eliminar este usuario" class="btn btn-danger btn-sm btn-delete"><span class="glyphicon glyphicon-remove"></span> Eliminar</a>
+				</div>
+			</div>
+			<table class="table table-hover table-condensed table-striped ">
+				<tr>
+					<th>Nombre de usuario</th>
+					<td>
+					[[ username ]]
+					</td>
+				</tr>
+				<tr>
+					<th>Nombres/Apellidos</th>
+					<td>
+					[[ first_name ]] [[ last_name ]]
+					</td>
+				</tr>
+				<tr>
+					<th>Correo Electr&oacute;nico</th>
+					<td>[[ email ]]</td>
+				</tr>
+			</table>
+		</div>	
+	</div>
+<!-- /Show User Template -->
+<!-- can user login Template -->
+	<div id="userLoginTemplate" class="hidden">
+		{% templatetag openvariable %}=[[ ]]={% templatetag closevariable %}
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">¿Seguro que quiere que [[ first_name ]] pueda acceder a la plataforma?</h3>
+			</div>
+			<div class="panel-body">
+				<p class="text-message">
+					[[#is_active]]
+					<p class="alert alert-success"><strong>[[ first_name ]] [[ last_name ]]</strong> Ya tiene acceso.</p>
+					<strong>¿Enviar de nuevo?</strong>
+					[[/is_active]]
+					[[#email]]
+						Se enviar&aacute; un correo electr&oacute;nico a <strong>[[ email ]]</strong> (<a href="[[ url_update ]]?next=login-access&user=[[ pk ]]">Editar</a>) con los datos para acceder a la plataforma.<br><br>
+						<strong>[[ first_name ]] [[ last_name ]]</strong> podr&aacute; acceder a la plataforma.
+					[[/email]]
+					[[^email]]
+						no tiene email asignado, es necesario un correo electr&oacute;nico para la acitvaci&oacute;n de la cuenta.
+					[[/email]]
+				</p>
+			</div>
+			<div class="panel-footer text-center">
+				[[#email]]
+					<a href="[[ url_login ]]" class="btn btn-success [[^email]]disabled[[/email]]">
+					[[#is_active]]Enviar datos[[/is_active]][[^is_active]]Si, permitir acceso[[/is_active]]</a>
+					<button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
+				[[/email]]
+				[[^email]]
+					<a href="[[ url_update ]]?next=login-access&user=[[ pk ]]" class="btn btn-info">Agregar correo electr&oacute;nico.</a>
+				[[/email]]
+			</div>
+		</div>
+	</div>
+<!-- /can user login Template -->
+{% endblock %}
+
+{% block style %}
+<style type="text/css">
+	.actions .btn{padding: 0;}
+	.panel-title{line-height: 34px;}
+</style>
+{% endblock %}
+{% load jsonify %}
+{% block js %}
+<script src="{{ STATIC_URL }}libs/mustache.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		{% if show_form %}
+			$('#newUserModal').modal('show');
+			$("#id_first_name").focus();
+		{% endif %}
+		{% if form_mode == "_update" %}
+			$('#newUserModal').on('hidden.bs.modal', function () {
+			  	top.location = "{% url 'admin_users' %}"
+			});
+		{% endif %}
+		$("span, .actions a, a").tooltip();
+		users_list = {
+		{% for u in users %}
+			"{{ u.pk }}":
+			{
+				"pk":"{{ u.pk }}",
+				"url_update": "{% url 'update_user' u.id %}",
+				"url_delete": "{% url 'delete_user' u.id %}",
+				"username": "{{ u.username }}",
+				"is_active": {{ u.is_active|lower }},
+				"first_name": "{{ u.first_name }}",
+				"last_name": "{{ u.last_name }}",
+				"get_full_name": "{{ u.get_full_name }}",
+				"email": "{{ u.email }}",
+			},
+		{% endfor %}
+		}
+		$(".btn-view").on("click", function (e){
+			e.preventDefault();
+			e.stopPropagation();
+			var pk = $(this).attr("data-pk");
+			$("#userModal .modal-body").html(Mustache.to_html($("#userTemplate").html(), users_list[pk]));
+			$("#userModal .modal-body")
+			$('#userModal').modal('show');
+			$("a.btn-delete").on("click", function (e) {
+		        e.preventDefault();
+		        e.stopPropagation();
+		        if ( confirm("Seguro que quiere eliminar?") ){
+		            top.location = $(this).attr("href");
+		        }
+		    });
+		});
+		function openDinamicModal (elem, ctx) {
+			/*
+				elem => DOM element with Mustache template
+				ctx => Context with JSON vars for mustache
+			*/
+			$("#userModal .modal-body").html(Mustache.to_html($(elem).html(), ctx));
+			$("#userModal .modal-body");
+			$('#userModal').modal('show');
+		}
+		$(".btn-can-login").on("click", function (e){
+			e.preventDefault();
+			e.stopPropagation();
+			var pk = $(this).attr("data-pk");
+			console.log($(this).attr("href"));
+			url = $(this).attr("href");
+			ctx = users_list[pk]
+			ctx["url_login"] = url
+			openDinamicModal("#userLoginTemplate", ctx);
+		});
+		if (getUrlVars().next){
+			$("#next").val(getUrlVars().next);
+			{% if form_mode != '_update' %}
+			if (getUrlVars().user){
+				ctx = users_list[getUrlVars().user]
+				ctx["url_login"] = "{% url 'permission_login' pk %}"
+				openDinamicModal("#userLoginTemplate", ctx);
+			}
+			{% endif %}
+		}
+		if (getUrlVars().user){
+			$("#pkUser").val(getUrlVars().user);
+		}
+		if (getUrlVars().msj){
+			var u = getUrlVars().user;
+			var pk = users_list[u].pk;
+			switch(getUrlVars().msj){
+				case "ahora-puede-iniciar": 
+					$("#user"+pk).addClass("alert alert-success");
+					setAlertMessage("Correo enviado", "Se envi&oacute; un correo electr&oacute;nico con los datos de acceso a la plataforma a " + users_list[u].get_full_name);
+					break;
+				case "no-tiene-correo":
+					$("#user"+pk).addClass("alert alert-warning");
+					setAlertError("No se envi&oacute; el correo", users_list[u].get_full_name + " no tiene asignado un correo electr&oacute;nico");
+					break;
+				case "Error-no-se-envio-coreo":
+					$("#user"+pk).addClass("alert alert-danger");
+					setAlertError("No se envi&oacute; el correo", "Ocurri&oacute; un error al enviar los datos. <a href='.'>Recarga la p&aacute;gina</a> e intenta de nuevo.");
+					break;
+			}
+		}
+		/* dataTables jQuery plugin activation setDataTables(id_table)*/
+		setDataTables('#dataTable');
+	});
+</script>
+{% endblock %}

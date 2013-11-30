@@ -1,5 +1,5 @@
 #encoding:utf-8
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template import RequestContext  
 #Django Auth
@@ -13,7 +13,9 @@ from apps.account.forms import RegisterForm, LoginCaptchaForm
 from .send_email import sendEmailHtml
 from hashlib import sha256 as sha_constructor
 from django.contrib.auth.models import User
+from django.conf import settings
 import random
+from django.http import Http404
 
 
 @login_required()
@@ -42,6 +44,16 @@ def getActivationKey(email_user):
     return sha_constructor(sha_constructor(str(random.random())).hexdigest()[:5] + email_user).hexdigest()
 
 
+def set_activation_key(user):
+    try:
+        from .models import activation_keys
+        ak_obj = activation_keys(id_user=user, email=user.email, activation_key=getActivationKey(user.email))
+        ak_obj.save()
+        return ak_obj
+    except Exception, e:
+        print "Error in activation_keys:", e
+        return False
+
 
 def newUser(request):
     if not request.user.is_anonymous():
@@ -60,7 +72,12 @@ def newUser(request):
                 from models import activation_keys
                 activation_keys(id_user=new_user, email=email_user, activation_key=activation_key).save()
                 print reverse("activate_account", args=(activation_key,))
-                sendEmailHtml(1, {'username': name_newuser, 'activation_key': activation_key}, [str(email_user)])  # Envio de correo con clave de activacion
+                ctx = {
+                    "PROJECT_NAME": settings.PROJECT_NAME,
+                    "URL_BASE": settings.URL_BASE,
+                    'username': name_newuser, 'activation_key': activation_key
+                }
+                sendEmailHtml(1, ctx, [str(email_user)])  # Envio de correo con clave de activacion
                 return render_to_response('registered.html', {'email_address': email_user}, context_instance=RequestContext(request))
             except Exception, e:
                 print e
@@ -189,9 +206,6 @@ def activate_account_now(request, activation_key):
         return False
 
 
-
-
-
 def userLogin(request, user_name, password):
     try:
         next = request.GET['next']
@@ -242,3 +256,104 @@ def log_out(request):
     except Exception, e:
         print e
     return HttpResponseRedirect(reverse("home"))
+
+
+
+@login_required()
+def admin_users(request):
+    if request.user.is_superuser:
+        from apps.account.forms import UserForm
+        if request.method == 'POST':
+            user_form  = UserForm(request.POST)
+            u = user_form.is_valid()
+            if u:
+                _user = user_form.save()
+                _user.is_active = False
+                _user.save()
+                user_form = UserForm()
+            else:
+                show_form = True
+            if '_createanother' in request.POST:
+                show_form = True
+        else:
+            user_form  = UserForm()
+        form_mode  = "_create"
+        users = User.objects.exclude(pk=1).filter()
+        user_obj = False
+        pk = str(request.GET.get("user")) if "user" in request.GET and request.GET.get("user") != "" else "0"
+        return render_to_response("user_crud.html", locals(), context_instance=RequestContext(request))
+    else:
+        raise Http404
+
+@login_required()
+def read_user(request, id_user):
+    if request.user.is_superuser:
+        u = get_object_or_404(User, pk=id_user)
+        return render_to_response("users/read_user.html", locals(), context_instance=RequestContext(request))
+    else:
+        raise Http404
+
+@login_required()
+def update_user(request, id_user):
+    if request.user.is_superuser:
+        _user = get_object_or_404(User, pk=id_user)
+        from apps.account.forms import UserForm
+        if request.method == "POST":
+            user_form  = UserForm(request.POST, instance=_user)
+            if user_form.is_valid():
+                _user = user_form.save()
+                user_form = UserForm()
+                # GET vars
+                u = str(request.POST.get("pk_user")) if "pk_user" in request.POST and request.POST.get("pk_user") != "" else None
+                next = str("&next=" + request.POST.get("next")) if "next" in request.POST and request.POST.get("next") != "" else ""
+                u = "?user=" + u if u else ""
+                return HttpResponseRedirect(reverse(admin_users) + str(u) + str(next))
+            else:
+                show_form = True
+        else:
+            show_form = True
+            user_form  = UserForm(instance=_user)
+        form_mode = "_update"
+        user_obj = _user
+        return render_to_response("user_crud.html", locals(), context_instance=RequestContext(request))
+    else:
+        raise Http404
+
+
+@login_required()
+def delete_user(request, id_user):
+    if request.user.is_superuser:
+        _user = get_object_or_404(User, pk=id_user)
+        _user.delete()
+        return HttpResponseRedirect(reverse("admin_users") + "#usuario-eliminado")
+    else:
+        raise Http404
+
+
+@login_required()
+def permission_login(request, id_user):
+    if request.user.is_superuser:
+        _user = get_object_or_404(User, pk=id_user)
+        if _user.email:
+            ak_obj = set_activation_key(_user)
+            if ak_obj:
+                activation_key = ak_obj.activation_key
+                _user.set_password(activation_key[:8])
+                print settings.URL_BASE + reverse("confirm_account", args=(activation_key, activation_key[5:20]))
+                email_ctx = {
+                    "PROJECT_NAME": settings.PROJECT_NAME,
+                    "PROJECT_DESCRIPTION": settings.PROJECT_DESCRIPTION,
+                    "username": request.user.get_full_name(),
+                    "newuser_username": _user.username,
+                    "pass": activation_key[:8],
+                    "link": settings.URL_BASE + reverse("confirm_account", args=(activation_key, activation_key[5:20])),
+                }
+                sendEmailHtml(2, email_ctx, [_user.email])
+                _user.save()
+            else:
+                return HttpResponseRedirect(reverse("admin_users") + "?user=" + str(_user.id) + "&msj=Error-no-se-envio-coreo")
+        else:
+            return HttpResponseRedirect(reverse("admin_users") + "?user=" + str(_user.id) + "&msj=no-tiene-correo")
+        return HttpResponseRedirect(reverse("admin_users")  + "?user=" + str(_user.id) + "&msj=ahora-puede-iniciar")
+    else:
+        raise Http404

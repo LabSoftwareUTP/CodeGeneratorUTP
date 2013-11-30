@@ -1,2 +1,5 @@
 django>=1.6
 django-simple-captcha
+django-export-xls>=0.1.1
+Werkzeug>=0.9.4
+django-extensions>=1.2.5

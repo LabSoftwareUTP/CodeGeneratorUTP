@@ -20,6 +20,12 @@ class RegisterForm(UserCreationForm):
         help_text="Requerido. 30 caracteres o menos. Letras, dígitos y @/./+/-/_ solamente."
     )
 
+    def clean_password2(self):
+        password2 = self.cleaned_data.get("password2")
+        if len(password2) <= 6:
+            raise forms.ValidationError("Password must to have more than 8 characters")
+        return password2
+
     class Meta:
         model = User
         fields = ("username", "email",)
@@ -42,7 +48,7 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         # unique = ('email')
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('username', 'first_name', 'last_name', 'email')
 
     def save(self):
         print self.cleaned_data["email"]

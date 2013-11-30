@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-account_urls = patterns('apps.account.views',
+general_urls = patterns('apps.account.views',
     url(r'^$', 'personal_data', name="personal_data"),
     url(r'^new', 'newUser', name="new_user"),
     url(r'^edit$', 'update_personal_data', name="update_personal_data"),
@@ -14,3 +14,11 @@ account_urls = patterns('apps.account.views',
     url(r'^login', 'log_in', name="login"),
     url(r'^logout', 'log_out', name="logout"),
 )
+users = patterns('apps.account.views',
+    url(r'^lista-de-usuarios/$', 'admin_users', name="admin_users"),
+    url(r'^editar-usuario/(?P<id_user>[0-9]+)/$', 'update_user', name="update_user"),
+    url(r'^eliminar-usuario/(?P<id_user>[0-9]+)/$', 'delete_user', name="delete_user"),
+    url(r'^ver-usuario/(?P<id_user>[0-9]+)/$', 'read_user', name="read_user"),
+    url(r'^asignar-credenciales/(?P<id_user>[0-9]+)/$', 'permission_login', name="permission_login"),
+)
+account_urls = general_urls + users
