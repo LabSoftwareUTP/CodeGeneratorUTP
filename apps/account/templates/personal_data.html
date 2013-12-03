@@ -24,9 +24,21 @@
                     {{ user_form }}
                 {% else %}
                     <tr>
-                        <th>Nombres/Apellidos</th>
+                        <th>{% trans 'Nombre de usuario' %}:</th>
                         <td>
-                        {{ user.get_full_name }}
+                        {{ user.username }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{% trans 'Nombre' %}:</th>
+                        <td>
+                        {{ user.first_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{% trans 'Apellidos' %}:</th>
+                        <td>
+                        {{ user.last_name }}
                         </td>
                     </tr>
                     <tr>
