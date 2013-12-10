@@ -58,9 +58,15 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'apps.website',
     'apps.account',
+    'apps.core',
     'captcha',
-    'django_extensions'
 )
+try:
+    import django_extensions
+    INSTALLED_APPS += INSTALLED_APPS + tuple(['django_extensions'])
+    print "LISTO"
+except:
+    pass
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -86,6 +92,9 @@ DATABASES = {
     }
 }
 
+MYSQL_USER = "root"
+MYSQL_PASSWD = "holamundo"
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -103,8 +112,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.sep.join([os.path.dirname(os.path.dirname(__file__)), 'public/media'])
+MEDIA_URL = '/media/'
+
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.sep.join([os.path.dirname(os.path.dirname(__file__)), 'public/static']),
 )
