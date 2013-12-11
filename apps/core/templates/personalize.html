@@ -1,0 +1,16 @@
+{% extends "menu.html" %}
+{% load i18n %}
+{% block content_menu %}
+<div class="b">
+	<h1>{% trans 'Personalizar campos' %}</h1>
+	<p>{{ obj.id }} - {{ obj.name }}</p>
+</div>
+{% endblock %}
+
+{% block js_menu %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#generate, #menu-personalize").addClass("active");
+	});
+</script>
+{% endblock %}

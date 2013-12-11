@@ -1,3 +1,4 @@
 from django.contrib import admin
+from apps.core.models import *
 
-# Register your models here.
+admin.site.register(DataBaseTmp)  # aca registramos nuestro modelo con el admin de django

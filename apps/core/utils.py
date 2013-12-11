@@ -7,13 +7,27 @@ import os
 import re
 import MySQLdb
 import datetime
+DB_USER = settings.MYSQL_USER
+DB_USER_PASSWD = settings.MYSQL_PASSWD
+
+
+def create_db(user):
+    db1 = MySQLdb.connect(host="localhost",user=DB_USER,passwd=DB_USER_PASSWD)
+    cursor = db1.cursor()
+    db_name = 'tmp_db_%s_%s' % (user.username, datetime.datetime.now().strftime("%Y_%m_%d_%H_%M"))
+    sql = "CREATE DATABASE %s;" % (db_name)
+    try:
+        cursor.execute(sql)
+    except Exception, e:
+        raise e
+    return db_name
 
 
 def exec_sql_file(user, sql_file):
     """Thanks to @noumenon for his code: http://stackoverflow.com/questions/4408714/execute-sql-file-with-python-mysqldb"""
     
-    db_temp = "temp"
-    db = MySQLdb.connect(user=settings.MYSQL_USER, passwd=settings.MYSQL_PASSWD, db=db_temp)
+    db_temp = create_db(user)
+    db = MySQLdb.connect(host="localhost", user=DB_USER, passwd=DB_USER_PASSWD, db=db_temp)
 
     filename = '%s/%s-%s' % (str(user.id) + "-" + user.username, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"), sql_file.name)
     path = default_storage.save(filename, ContentFile(sql_file.read()))
@@ -38,3 +52,4 @@ def exec_sql_file(user, sql_file):
                 print "YA EXISTE ESA TABLA"
 
             statement = ""
+    return db_temp

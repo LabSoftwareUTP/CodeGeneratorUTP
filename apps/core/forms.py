@@ -15,6 +15,6 @@ class ImportSQLForm(forms.Form):
         import_file = self.cleaned_data['import_file']
         extension = os.path.splitext( import_file.name )[1]
         if not (extension in IMPORT_FILE_TYPES):
-            raise forms.ValidationError( u'%s no es un archivo válido.' % extension )
+            raise forms.ValidationError( _(u'%s no es un archivo válido.' % extension) )
         else:
             return import_file

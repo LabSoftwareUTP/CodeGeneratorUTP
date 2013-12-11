@@ -7,7 +7,11 @@
 		{% csrf_token %}
 		<table>{{ form }}</table>
 		<hr>
-		<input type="submit" value="{% trans 'Subir base de datos' %}" >
+		<button type="submit" class="btn btn-success">
+			<span class="glyphicon glyphicon-open"></span>
+			{% trans 'Subir base de datos' %}
+		</button>
+
 	</form>
 </div>
 {% endblock %}
