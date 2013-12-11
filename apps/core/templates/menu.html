@@ -7,9 +7,9 @@
     <div class="col-sm-3 ">
     	<div class="" id="sidebar" role="navigation">
 		  <div class="list-group">
-		    <a href="#" class="list-group-item active">Link</a>
-		    <a href="#" class="list-group-item">Link</a>
-		    <a href="#" class="list-group-item">Link</a>
+		    <a href="#" class="list-group-item" id="menu-upload">{% trans 'Subir Archivo' %}</a>
+		    <a href="#" class="list-group-item">{% trans 'Personalizaci&oacute;n' %}</a>
+		    <a href="#" class="list-group-item">{% trans 'Seleccionar plantilla' %}</a>
 		  </div>
 		</div>
     </div>
@@ -26,9 +26,11 @@
 </style>
 {% endblock %}
 {% block js %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        //TODO here
-    });
-</script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //TODO here
+        });
+    </script>
+    {% block js_menu %}
+    {% endblock %}
 {% endblock %}

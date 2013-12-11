@@ -64,7 +64,6 @@ INSTALLED_APPS = (
 try:
     import django_extensions
     INSTALLED_APPS += INSTALLED_APPS + tuple(['django_extensions'])
-    print "LISTO"
 except:
     pass
 

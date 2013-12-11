@@ -12,10 +12,10 @@
       {% if user.is_authenticated %}
       {% if user.is_superuser %}
       <ul class="nav navbar-nav">
-        <li>
+        <li id="user-admin">
           <a href="{% url 'admin_users' %}">{% trans 'Administrar usuarios' %}</a>
         </li>
-        <li>
+        <li id="generate">
           <a href="{% url 'upload' %}">{% trans 'Generar código' %}</a>
         </li>
       </ul>

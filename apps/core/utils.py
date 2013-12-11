@@ -17,7 +17,6 @@ def exec_sql_file(user, sql_file):
 
     filename = '%s/%s-%s' % (str(user.id) + "-" + user.username, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"), sql_file.name)
     path = default_storage.save(filename, ContentFile(sql_file.read()))
-    print "path",path
     sql_file = os.path.join(settings.MEDIA_ROOT, path)
 
     print "\n[INFO] Executing SQL script file: '%s'" % (sql_file)

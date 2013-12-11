@@ -11,3 +11,11 @@
 	</form>
 </div>
 {% endblock %}
+
+{% block js_menu %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#generate, #menu-upload").addClass("active");
+	});
+</script>
+{% endblock %}
