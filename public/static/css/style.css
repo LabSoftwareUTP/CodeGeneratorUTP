@@ -42,7 +42,6 @@ table.dataTable tr.odd td.sorting_1{background-color: #f9f9f9;}
 
 .box-container{margin: 0 auto; width: 50%;}
 .errorlist{color: red;}
-
 @media (min-width: 1280px) {
 }
 @media (min-width: 1200px) {

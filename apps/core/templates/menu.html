@@ -13,7 +13,7 @@
 		  </div>
 		</div>
     </div>
-    <div class="col-sm-9 col-sm-offset-2 col-md-6 col-md-offset-0">
+    <div class="col-sm-9 col-sm-offset-2 col-md-9 col-md-offset-0">
     	{% block content_menu %}
     	{% endblock %}
     </div>
@@ -22,8 +22,10 @@
 
 {% endblock %}
 {% block style %}
-<style type="text/css">
-</style>
+    <style type="text/css">
+    </style>
+    {% block style_menu %}
+    {% endblock %}
 {% endblock %}
 {% block js %}
     <script type="text/javascript">

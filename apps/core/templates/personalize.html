@@ -2,15 +2,87 @@
 {% load i18n %}
 {% block content_menu %}
 <div class="b">
-	<h1>{% trans 'Personalizar campos' %}</h1>
-	<p>{{ obj.id }} - {{ obj.name }}</p>
+	<h1>{% trans 'Personalizar' %} <em>{{ obj.name }}</em>:</h1>
+    <hr>
+	<div class="panel-group" id="accordionTables">
+        {% for t in tables %}
+		<div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordionTables" href="#collapse-{{ forloop.counter0 }}">
+                    {{ forloop.counter }}. {{ t.name.0 }}
+                </a>
+                <a href="#" class="pull-right"><span class="glyphicon glyphicon-trash"></span></a>
+              </h4>
+            </div>
+            <div id="collapse-{{ forloop.counter0 }}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <th>#</th>
+                            <th>{% trans 'Columna' %}</th>
+                            <th>{% trans 'Tipo' %}</th>
+                            <th>{% trans 'Null' %}</th>
+                            <th>{% trans 'Key' %}</th>
+                            <th>{% trans 'Default' %}</th>
+                            <th>{% trans 'Extra' %}</th>
+                            <th>{% trans 'Acción' %}</th>
+                        </tr>
+                            {% for col in t.columns %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                {{ col.0 }}
+                            </td>
+                            <td>
+                                {{ col.1 }}
+                            </td>
+                            <td>
+                                {{ col.2 }}
+                            </td>
+                            <td>
+                                {{ col.3 }}
+                            </td>
+                            <td>
+                                {{ col.4 }}
+                            </td>
+                            <td>
+                                {{ col.5 }}
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </td>
+                        </tr>
+                            {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+	</div>
+    <hr>
+    <div class="btn-group">
+        <button class="btn btn-success">Continuar</button>
+    </div>
 </div>
+{% endblock %}
+
+{% block style_menu %}
+<style type="text/css">
+    .b{margin-bottom: 20px;}
+    #accordionTables .panel-body{padding: 0;border-top: none;}
+    #accordionTables .panel-body > table{margin: 0;}
+</style>
 {% endblock %}
 
 {% block js_menu %}
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#generate, #menu-personalize").addClass("active");
+        $('.collapse').collapse({
+          toggle: false
+        });
 	});
 </script>
 {% endblock %}

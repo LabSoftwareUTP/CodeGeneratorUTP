@@ -53,3 +53,22 @@ def exec_sql_file(user, sql_file):
 
             statement = ""
     return db_temp
+
+
+class DataBase():
+    
+    def __init__(self, **kwargs):
+        db = MySQLdb.connect(host="localhost", user=DB_USER, passwd=DB_USER_PASSWD, db=kwargs['name'])
+        self.cursor = db.cursor()
+            
+
+    def show_tables(self):
+        self.cursor.execute("SHOW TABLES;")
+        return self.cursor.fetchall()
+
+    def show_fields(self, table=None):
+        if table:
+            self.cursor.execute("DESCRIBE %s;" % table)
+            return self.cursor.fetchall()
+        else:
+            return None

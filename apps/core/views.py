@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from apps.core.forms import ImportSQLForm
-from apps.core.utils import exec_sql_file
 from apps.core.models import *
+from apps.core.utils import *
 
 
 @login_required()
@@ -25,6 +25,10 @@ def upload(request):
 def personalize(request, id_db):
     if id_db:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
+        conn = DataBase(name=obj.name) #connection
+        tables = []
+        for t in conn.show_tables():
+            tables.append({"name": t, "columns": conn.show_fields(table=t)})
         return render(request, "personalize.html", locals())
     else:
         return Http404
