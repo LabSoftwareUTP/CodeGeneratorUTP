@@ -13,7 +13,7 @@ def upload(request):
         form = ImportSQLForm(request.POST, request.FILES)
         if form.is_valid():
             db_name = exec_sql_file(request.user, request.FILES['import_file'])
-            obj = DataBaseTmp(user=request.user, name=db_name)
+            obj = DataBaseTmp(user=request.user, name=db_name, name_original_file=request.FILES['import_file'].name)
             obj.save()
             return redirect(reverse(personalize, args=(obj.id,)))
     else:
