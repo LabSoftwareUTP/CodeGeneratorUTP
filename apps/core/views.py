@@ -12,8 +12,8 @@ def upload(request):
     if request.method == "POST":
         form = ImportSQLForm(request.POST, request.FILES)
         if form.is_valid():
-            db_name = exec_sql_file(request.user, request.FILES['import_file'])
-            obj = DataBaseTmp(user=request.user, db_name=db_name, filename=request.FILES['import_file'].name)
+            db_name, media_filename = exec_sql_file(request.user, request.FILES['import_file'])
+            obj = DataBaseTmp(user=request.user, db_name=db_name, filename=request.FILES['import_file'].name, media_filename=media_filename)
             obj.save()
             return redirect(reverse(personalize, args=(obj.id,)))
     else:

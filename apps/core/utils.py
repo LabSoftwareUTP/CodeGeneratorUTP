@@ -52,7 +52,7 @@ def exec_sql_file(user, sql_file):
                 print "YA EXISTE ESA TABLA"
 
             statement = ""
-    return db_temp
+    return db_temp, path
 
 
 class DataBase():

@@ -18,7 +18,8 @@ class GenericManager(models.Manager):
 class DataBaseTmp(models.Model):
     user = models.ForeignKey(User,  null=False, related_name='%(class)s_user')
     db_name = models.CharField(max_length=100,verbose_name=_("Nombre de la db"))
-    filename = models.CharField(max_length=100,verbose_name=_("Nombre inicial del archivo"))
+    filename = models.CharField(max_length=100,verbose_name=_("Nombre de archivo"))
+    media_filename = models.CharField(max_length=100,verbose_name=_("Nombre de archivo"))
     objects = GenericManager()
 
     is_deleted = models.BooleanField(default=False)
@@ -26,4 +27,4 @@ class DataBaseTmp(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return "%s: %s. deleted:%s" % (self.user, self.name, self.is_deleted)
+        return "%s: %s ---> deleted:%s" % (self.user, self.db_name, self.is_deleted)
