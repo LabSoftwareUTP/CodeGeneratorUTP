@@ -17,8 +17,8 @@ class GenericManager(models.Manager):
 
 class DataBaseTmp(models.Model):
     user = models.ForeignKey(User,  null=False, related_name='%(class)s_user')
-    name = models.CharField(max_length=100,verbose_name=_("Nombre de la db"))
-    name_original_file = models.CharField(max_length=100,verbose_name=_("Nombre inicial del archivo"))
+    db_name = models.CharField(max_length=100,verbose_name=_("Nombre de la db"))
+    filename = models.CharField(max_length=100,verbose_name=_("Nombre inicial del archivo"))
     objects = GenericManager()
 
     is_deleted = models.BooleanField(default=False)

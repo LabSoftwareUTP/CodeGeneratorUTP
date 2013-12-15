@@ -13,7 +13,7 @@ def upload(request):
         form = ImportSQLForm(request.POST, request.FILES)
         if form.is_valid():
             db_name = exec_sql_file(request.user, request.FILES['import_file'])
-            obj = DataBaseTmp(user=request.user, name=db_name, name_original_file=request.FILES['import_file'].name)
+            obj = DataBaseTmp(user=request.user, db_name=db_name, filename=request.FILES['import_file'].name)
             obj.save()
             return redirect(reverse(personalize, args=(obj.id,)))
     else:
@@ -25,7 +25,7 @@ def upload(request):
 def personalize(request, id_db):
     if id_db:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
-        conn = DataBase(name=obj.name) #connection
+        conn = DataBase(name=obj.db_name) #connection
         tables = []
         for t in conn.show_tables():
             tables.append({"name": t, "columns": conn.show_fields(table=t)})

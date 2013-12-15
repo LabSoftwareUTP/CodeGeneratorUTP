@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block content_menu %}
 <div class="b">
-	<h1>{% trans 'Listado de tablas del archivo' %}: <em>{{ obj.name_original_file }}</em>:</h1>
+	<h1>{% trans 'Listado de tablas del archivo' %}: <em>{{ obj.filename }}</em>:</h1>
     <hr>
 	<div class="panel-group" id="accordionTables">
         {% for t in tables %}
