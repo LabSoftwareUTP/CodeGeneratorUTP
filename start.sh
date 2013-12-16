@@ -1,2 +1,2 @@
 #!/bin/bash
-uwsgi --socket :8001 --wsgi-file wsgi.py -d log.log
+uwsgi --socket :8002 --wsgi-file wsgi.py -d log.log
