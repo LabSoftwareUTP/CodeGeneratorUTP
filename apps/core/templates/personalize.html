@@ -63,8 +63,10 @@
         {% endfor %}
 	</div>
     <hr>
-    <div class="btn-group">
-        <a href="{% url 'inspectdb' obj.id %}"  class="btn btn-success">{% trans 'Continuar' %}</a>
+    <div class="btn-groups">
+        <a href="{% url 'inspectdb' obj.id %}"  class="btn btn-success "><span class="glyphicon glyphicon-download-alt"></span> {% trans 'Generar Código' %}</a>
+
+        <a href="{% url 'close_db' obj.id %}"  class="btn btn-warning btn-cancel"><span class="glyphicon glyphicon-exclamation-sign"></span> {% trans 'Cancelar' %}</a>
     </div>
 </div>
 {% endblock %}

@@ -59,53 +59,6 @@ def exec_sql_file(user, sql_file):
     return db_temp, path
 
 
-class DataBase():
-    
-    def __init__(self, **kwargs):
-        db = MySQLdb.connect(host="localhost", user=DB_USER, passwd=DB_USER_PASSWD, db=kwargs['name'])
-        self.cursor = db.cursor()
-            
-
-    def show_tables(self):
-        self.cursor.execute("SHOW TABLES;")
-        return self.cursor.fetchall()
-
-    def delete_table(self, table=None):
-        if table:
-            sql = "DROP TABLE IF EXISTS %s CASCADE;" % table
-            try:
-                print sql
-                self.cursor.execute(sql)
-                return self.cursor.fetchall()
-            except (OperationalError, ProgrammingError) as e:
-                print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
-
-            except IntegrityError, e:
-                print "\n[IntegrityError]", e
-        else:
-            return None
-
-    def rename_table(self, old_name=None, new_name=None):
-        if old_name and new_name:
-            sql = "RENAME TABLE %s TO %s;" % (old_name, new_name)
-            try:
-                print sql
-                self.cursor.execute(sql)
-                return self.cursor.fetchall()
-            except (OperationalError, ProgrammingError) as e:
-                print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
-                return {"error": "[WARN] MySQLError during execute statement: Args: '%s'" % (str(e.args))}
-        else:
-            return {}
-
-    def show_fields(self, table=None):
-        if table:
-            self.cursor.execute("DESCRIBE %s;" % table)
-            return self.cursor.fetchall()
-        else:
-            return None
-
-
 import commands
 from django.template.defaultfilters import slugify
 from apps.inspectdb.management.commands import inspectdb
@@ -116,40 +69,41 @@ def create_app(user, app_name, db_name):
     app_path = "%s/%s/%s" % (settings.MEDIA_ROOT, str(user.id) + "-" + user.username, app_name)
     #we need to have another database in the settings var to use inspectdb
     settings.DATABASES['mysql'] = {'ENGINE': 'django.db.backends.mysql','NAME': db_name,'USER': DB_USER,'PASSWORD': DB_USER_PASSWD}
+    
     print "Creando app en %s" % app_path
     commands.getoutput("mkdir %s" % app_path)
-    commands.getoutput("touch %s/__init__.py" % (app_path))
+    init = open("%s/__init__.py" % app_path, "w")
+    init.close()
 
-    commands.getoutput("touch %s/urls.py" % (app_path))
-    
-    commands.getoutput("touch %s/views.py" % (app_path))
-    urls = open("%s/urls.py" % app_path, "w")
     text = "from django.conf.urls import patterns, url\n\ngeneral_urls = patterns('%s.views',\n\turl(r'^$', 'home', name='%s_home'),\n)" % (app_name, app_name)
+    urls = open("%s/urls.py" % app_path, "w")
     urls.write(text)
+    urls.close()
     
-    commands.getoutput("touch %s/views.py" % (app_path))
     views = open("%s/views.py" % app_path, "w")
     text = "# encoding:utf-8\nfrom django.shortcuts import render\n\ndef home(request):\n\treturn render(request, 'index.html', locals())\n"
     views.write(text)
-    
-    out = open("%s/models.py" % app_path, "w")
-    inspectdb.Command().execute(stdout=out)
+    views.close()
+
+    models = open("%s/models.py" % app_path, "w")
+    inspectdb.Command().execute(stdout=models)
+    models.close()
     commands.getoutput("mkdir %s/templates" % app_path)
     commands.getoutput("cp %s/apps/core/app_templates/* %s/templates/" % (settings.BASE_DIR, app_path))
     zip_app = compress_app(app_path, app_name, zfilename=app_name + ".zip")
-    # raise Exception
-    return  "%s%s-%s/%s.zip" % (settings.MEDIA_URL, str(user.id), user.username, app_name)
+    return  "%s-%s/%s.zip" % (str(user.id), user.username, app_name)
 
 
 def compress_app(app_path, app_name, zfilename='default.zip'): # 
-    zipf = zipfile.ZipFile(app_path + "/../" + zfilename, 'w')
+    zipf = zipfile.ZipFile(app_path + "/../" + zfilename, 'w', zipfile.ZIP_DEFLATED)
     zipdir(app_path , zipf)
     zipf.close()
     return zipf
 
 
-def zipdir(path, zip):
-    """Thanks to Mark Byers by http://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory-in-python"""
-    for root, dirs, files in os.walk(path):
+def zipdir(dir_path, zip):
+    for root, dirs, files in os.walk(dir_path):
+        # print "root: %s\ndirs: %s\nfiles: %s" % (root, dirs, files)
+        zip.write(root)
         for file in files:
             zip.write(os.path.join(root, file))

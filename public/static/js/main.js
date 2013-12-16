@@ -21,6 +21,13 @@ function main () {
             top.location = $(this).attr("href");
         }
     });
+    $("a.btn-cancel").on("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if ( confirm("Seguro que quiere cancelar?") ){
+            top.location = $(this).attr("href");
+        }
+    });
 }
 function hasHash (hash) {
     if(window.location.hash && window.location.hash == hash){

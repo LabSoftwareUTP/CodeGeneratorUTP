@@ -10,6 +10,7 @@ import json
 from apps.core.forms import ImportSQLForm
 from apps.core.models import *
 from apps.core.utils import *
+from apps.core.backends.mysql import DataBase
 
 
 @login_required()
@@ -29,7 +30,7 @@ def upload(request):
 @login_required()
 def personalize(request, id_db):
     if id_db:
-        obj = DataBaseTmp.objects.get_or_none(id=id_db)
+        obj = DataBaseTmp.objects.get_or_none(id=id_db, is_deleted=False)
         if obj and obj.user == request.user:
             conn = DataBase(name=obj.db_name) #connection
             tables = []
@@ -62,12 +63,23 @@ def inspectdb(request, id_db):
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
         if obj:
             filename = create_app(request.user, obj.filename, obj.db_name)
-            print "EL ARCHIVO", filename
-            # response = HttpResponse(mimetype='application/zip')
-            # response['Content-Disposition'] = 'attachment; filename=%s' % filename
-            # return response
-            # return redirect   (reverse(personalize, args=(obj.id,)))
-            return redirect(filename)
+            return redirect(settings.MEDIA_URL + filename)
+        else:
+            raise Http404
+    else:
+        raise Http404
+
+
+@login_required()
+def close_db(request, id_db):
+    if id_db:
+        obj = DataBaseTmp.objects.get_or_none(id=id_db)
+        if obj:
+            conn = DataBase(name=obj.db_name)
+            conn.delete_db()
+            obj.is_deleted = True
+            obj.save()
+            return redirect(upload)
         else:
             raise Http404
     else:
