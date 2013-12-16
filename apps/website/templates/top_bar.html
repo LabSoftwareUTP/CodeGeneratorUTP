@@ -10,16 +10,16 @@
   </div>
   <div class="collapse navbar-collapse">
       {% if user.is_authenticated %}
-      {% if user.is_superuser %}
       <ul class="nav navbar-nav">
+      {% if user.is_superuser %}
         <li id="user-admin">
           <a href="{% url 'admin_users' %}">{% trans 'Administrar usuarios' %}</a>
         </li>
+      {% endif %}
         <li id="generate">
           <a href="{% url 'upload' %}">{% trans 'Generar código' %}</a>
         </li>
       </ul>
-      {% endif %}
       <ul class="nav navbar-nav navbar-right">
         <li>
           <a href="{% url 'personal_data' %}">{{ user.username }}
