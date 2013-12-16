@@ -56,7 +56,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'djangosql',
     'apps.inspectdb',
     'apps.website',
     'apps.account',
