@@ -5,6 +5,7 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
+from django.conf import settings
 import json
 from apps.core.forms import ImportSQLForm
 from apps.core.models import *
@@ -48,6 +49,19 @@ def delete_table(request, id_db, table_name):
         if obj:
             conn = DataBase(name=obj.db_name) #connection
             conn.delete_table(table=table_name)
+            return redirect(reverse(personalize, args=(obj.id,)))
+        else:
+            raise Http404
+    else:
+        raise Http404
+
+
+@login_required()
+def inspectdb(request, id_db):
+    if id_db:
+        obj = DataBaseTmp.objects.get_or_none(id=id_db)
+        if obj:
+            create_app(request.user, obj.filename, obj.db_name)
             return redirect(reverse(personalize, args=(obj.id,)))
         else:
             raise Http404

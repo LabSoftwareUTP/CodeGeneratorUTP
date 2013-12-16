@@ -13,7 +13,7 @@
                     <div class="title-colapse">{{ forloop.counter }}. <span>{{ t.name.0 }}</span></div>
                 </a>
                     <a href="{% url 'del_table' obj.id t.name.0 %}" class="pull-right text-right btn-delete"><span class="glyphicon glyphicon-trash"></span></a>
-                    <a href="{% url 'del_table' obj.id t.name.0 %}" class="pull-right text-right btn-edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <a href="#" class="pull-right text-right btn-edit"><span class="glyphicon glyphicon-pencil"></span></a>
               </h4>
             </div>
             <div id="collapse-{{ forloop.counter0 }}" class="panel-collapse collapse">
@@ -64,7 +64,7 @@
 	</div>
     <hr>
     <div class="btn-group">
-        <button class="btn btn-success">{% trans 'Continuar' %}</button>
+        <a href="{% url 'inspectdb' obj.id %}"  class="btn btn-success">{% trans 'Continuar' %}</a>
     </div>
 </div>
 {% endblock %}

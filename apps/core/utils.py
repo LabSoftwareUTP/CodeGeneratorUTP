@@ -104,3 +104,33 @@ class DataBase():
             return self.cursor.fetchall()
         else:
             return None
+
+
+import commands
+from django.template.defaultfilters import slugify
+from apps.inspectdb.management.commands import inspectdb
+def create_app(user, app_name, db_name):
+    app_name = slugify(app_name)
+    app_path = "%s/%s/%s" % (settings.MEDIA_ROOT, str(user.id) + "-" + user.username, app_name)
+    #we need to have another database in the settings var to use inspectdb
+    settings.DATABASES['mysql'] = {'ENGINE': 'django.db.backends.mysql','NAME': db_name,'USER': DB_USER,'PASSWORD': DB_USER_PASSWD}
+    print "Creando app en %s" % app_path
+    commands.getoutput("mkdir %s" % app_path)
+    commands.getoutput("touch %s/__init__.py" % (app_path))
+
+    commands.getoutput("touch %s/urls.py" % (app_path))
+    
+    commands.getoutput("touch %s/views.py" % (app_path))
+    urls = open("%s/urls.py" % app_path, "w")
+    text = "from django.conf.urls import patterns, url\n\ngeneral_urls = patterns('%s.views',\n\turl(r'^$', 'home', name='%s_home'),\n)" % (app_name, app_name)
+    urls.write(text)
+    
+    commands.getoutput("touch %s/views.py" % (app_path))
+    views = open("%s/views.py" % app_path, "w")
+    text = "# encoding:utf-8\nfrom django.shortcuts import render\n\ndef home(request):\n\treturn render(request, 'index.html', locals())\n"
+    views.write(text)
+    
+    out = open("%s/models.py" % app_path, "w")
+    inspectdb.Command().execute(stdout=out)
+    commands.getoutput("mkdir %s/templates" % app_path)
+    print commands.getoutput("cp %s/apps/core/app_templates/* %s/templates/" % (settings.BASE_DIR, app_path))

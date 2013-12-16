@@ -56,11 +56,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangosql',
+    'apps.inspectdb',
     'apps.website',
     'apps.account',
     'apps.core',
     'captcha',
 )
+
 try:
     import django_extensions
     INSTALLED_APPS += INSTALLED_APPS + tuple(['django_extensions'])
@@ -88,13 +91,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
 }
+# try:
+#     from .temp_databases import TMP_DB
+#     DATABASES = DATABASES + TMP_DB
+# except:
+#     pass
 try:
     from .local_settings import MYSQL_USER, MYSQL_PASSWD
 except:
-    MYSQL_USER = "root"
     MYSQL_PASSWD = "holamundo"
+    MYSQL_USER = "root"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

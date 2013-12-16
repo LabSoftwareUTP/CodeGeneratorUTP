@@ -205,5 +205,6 @@ Thumbs.db
 
 #Enlace simbolico al Django Admin
 public/static/admin
+public/media/*
 
 local_settings.py
