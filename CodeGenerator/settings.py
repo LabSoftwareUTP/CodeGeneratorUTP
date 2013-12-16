@@ -90,9 +90,11 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-MYSQL_USER = "root"
-MYSQL_PASSWD = "holamundo"
+try:
+    from .local_settings import MYSQL_USER, MYSQL_PASSWD
+except:
+    MYSQL_USER = "root"
+    MYSQL_PASSWD = "holamundo"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
