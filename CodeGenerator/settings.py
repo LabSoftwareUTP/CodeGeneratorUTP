@@ -27,8 +27,15 @@ FROM_EMAIL = PROJECT_NAME + " <no-reply@daiech.com>"
 try:
     from .local_settings import GMAIL_USER, GMAIL_USER_PASS
 except:
-    pass
+    GMAIL_USER = ""
+    GMAIL_USER_PASS = ""
 
+
+EMAIL_HOST_USER = GMAIL_USER
+EMAIL_HOST_PASSWORD = GMAIL_USER_PASS
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
