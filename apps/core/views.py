@@ -30,7 +30,7 @@ def upload(request):
 def personalize(request, id_db):
     if id_db:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
-        if obj:
+        if obj and obj.user == request.user:
             conn = DataBase(name=obj.db_name) #connection
             tables = []
             for t in conn.show_tables():
