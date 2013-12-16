@@ -1,6 +1,11 @@
 django>=1.6
+<<<<<<< HEAD
 django-simple-captcha
 django-dajaxice
 
 Werkzeug>=0.9.4
 django-extensions>=1.2.5
+=======
+MySQL-python>=1.2.3
+django-simple-captcha
+>>>>>>> fba88a8528eb0a61097bb8b4cc1100e024c8161f

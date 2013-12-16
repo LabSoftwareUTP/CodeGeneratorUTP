@@ -1,0 +1,25 @@
+{% extends "menu.html" %}
+{% load i18n %}
+{% block content_menu %}
+<div class="b">
+	<h1>{% trans 'Seleccionar Base de Datos' %}</h1>
+	<form method="post" action="{% url 'upload' %}" enctype="multipart/form-data" role="form">
+		{% csrf_token %}
+		<table>{{ form }}</table>
+		<hr>
+		<button type="submit" class="btn btn-success">
+			<span class="glyphicon glyphicon-open"></span>
+			{% trans 'Subir base de datos' %}
+		</button>
+
+	</form>
+</div>
+{% endblock %}
+
+{% block js_menu %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#generate, #menu-upload").addClass("active");
+	});
+</script>
+{% endblock %}

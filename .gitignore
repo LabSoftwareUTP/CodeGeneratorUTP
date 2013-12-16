@@ -194,6 +194,7 @@ pip-log.txt
 *.log
 *.sql
 *.sqlite
+*.sqlite3
 
 # OS generated files #
 ######################
@@ -204,5 +205,6 @@ Thumbs.db
 
 #Enlace simbolico al Django Admin
 public/static/admin
+public/media/*
 
 local_settings.py

@@ -187,6 +187,7 @@
 <script src="{{ STATIC_URL }}libs/mustache.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
+		$("#user-admin").addClass("active");
 		{% if show_form %}
 			$('#newUserModal').modal('show');
 			$("#id_first_name").focus();

@@ -47,9 +47,13 @@ function setAlert(tittle, message, type){
     else if (l<=100) t=5000;
     else if (l<=200) t=6000;
     else if (l> 200) t=7000;
-    $(type+" h4").html(tittle);
-    $(type+" p").html(message);
-    $(type).fadeIn().delay(t).fadeOut(1500);
+
+    $(type + " h4").html(tittle);
+    $(type + " p").html(message);
+    $(type).fadeIn();
+    if (type != "#alert-error"){
+        $(type).delay(t).fadeOut(1500);
+    }
 }
 function setAlertError(t, m){
     setAlert(t, m, '#alert-error');
@@ -57,39 +61,53 @@ function setAlertError(t, m){
 function setAlertMessage(t, m){
     setAlert(t, m, '#alert-message');
 }
-function sendAjax(url, params, load_elem, myCallback){
-    // $(load_elem).show().html('<img src="/static/img/load16.gif" />');
-    $("#ac-load").fadeIn().html('<img src="/static/img/load.gif" />');
-    $.get(url, params, function(data,error) {
-            myCallback(data,error);
-            // $(load_elem).hide();
-            $("#ac-load").fadeOut();
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
-    );
-}
-function setDataTables(id_table){
-	var oTable = $(id_table).dataTable( {
-		"iDisplayLength": 30,
-        "aLengthMenu": [
-            [30, 100, 1000, -1],
-            [30, 100, 1000, "Todos"]
-        ],
-        "aaSorting": [],
-		"oLanguage": {
-			"sLengthMenu": "Mostrar _MENU_ registros",
-			"sZeroRecords": "No hay datos para mostrar",
-			"sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-			"sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-			"sInfoFiltered": "(filtro de _MAX_ registros en total)",
-			"sSearch": "_INPUT_",
-			"oPaginate": {
-                "sFirst": "Primera",
-                "sLast": "Ultima",
-                "sNext": "Siguiente",
-                "sPrevious": "Anterior"
-                },
-            },
-        } );
-    $("#usersList_filter > label > input").attr("placeholder", "Filtrar");
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            // Only send the token to relative URLs i.e. locally.
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    }
+});
+function sendAjax(url, params, myCallback, args) {
+    if (typeof args === "undefined") {
+        load_elem = "#load";
+    } else {
+        load_elem = args.load_elem;
+    }
+    $(load_elem).show().html('Cargando...');
+    if (typeof args === "undefined" || args.method === "get") {
+        $.get(url, params)
+                .done(function(data) {
+            myCallback(data);
+            $(load_elem).fadeOut();
+        }).fail(function(error) {
+            console.log(error);
+        });
+    } else if (args.method === "post") {
+        $.post(url, params)
+                .done(function(data) {
+            myCallback(data);
+            $(load_elem).fadeOut();
+        }).fail(function(error) {
+            console.log(error);
+        });
+    }
 }
 $(document).ready(main);

@@ -1,0 +1,124 @@
+{% extends "menu.html" %}
+{% load i18n %}
+{% block content_menu %}
+<div class="b">
+	<h1>{% trans 'Listado de tablas del archivo' %}: <em>{{ obj.filename }}</em>:</h1>
+    <hr>
+	<div class="panel-group" id="accordionTables">
+        {% for t in tables %}
+		<div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordionTables" href="#collapse-{{ forloop.counter0 }}">
+                    <div class="title-colapse">{{ forloop.counter }}. <span>{{ t.name.0 }}</span></div>
+                </a>
+                    <a href="{% url 'del_table' obj.id t.name.0 %}" class="pull-right text-right btn-delete"><span class="glyphicon glyphicon-trash"></span></a>
+                    <a href="#" class="pull-right text-right btn-edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </h4>
+            </div>
+            <div id="collapse-{{ forloop.counter0 }}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <th>#</th>
+                            <th>{% trans 'Columna' %}</th>
+                            <th>{% trans 'Tipo' %}</th>
+                            <th>{% trans 'Null' %}</th>
+                            <th>{% trans 'Key' %}</th>
+                            <th>{% trans 'Default' %}</th>
+                            <th>{% trans 'Extra' %}</th>
+                            <th>{% trans 'Acción' %}</th>
+                        </tr>
+                            {% for col in t.columns %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                {{ col.0 }}
+                            </td>
+                            <td>
+                                {{ col.1 }}
+                            </td>
+                            <td>
+                                {{ col.2 }}
+                            </td>
+                            <td>
+                                {{ col.3 }}
+                            </td>
+                            <td>
+                                {{ col.4 }}
+                            </td>
+                            <td>
+                                {{ col.5 }}
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <a href="#" class=" btn-delete"><span class="glyphicon glyphicon-trash"></span></a>
+                            </td>
+                        </tr>
+                            {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+	</div>
+    <hr>
+    <div class="btn-group">
+        <a href="{% url 'inspectdb' obj.id %}"  class="btn btn-success">{% trans 'Continuar' %}</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block style_menu %}
+<style type="text/css">
+    .b{margin-bottom: 20px;}
+    #accordionTables .panel-body{padding: 0;border-top: none;}
+    #accordionTables .panel-body > table{margin: 0;}
+    .title-colapse{width: 90%;display: inline-block;}
+    .panel-title .btn-edit{margin: 0 3px;}
+    div.title-colapse > span form{display: inline-block;}
+    div.title-colapse > span form input{display: inline-block;width: 200px;}
+</style>
+{% endblock %}
+
+{% block js_menu %}
+<script type="text/javascript">
+    $(document).on("click", ".btn-cancel-edit", function (e){
+        e.preventDefault();
+        e.stopPropagation();
+        var value = $(this).attr("data-value");
+        $(this).parent().parent().empty().text(value);
+    });
+    $(document).on("click", ".btn-save-edit", function (e){
+        e.preventDefault();
+        e.stopPropagation();
+        var elem = $(this).parent().parent();
+        var old_name = $(this).parent().find("input[name='old_table_name']").val();
+        var new_name = $(this).parent().find("input[name='table_name']").val();
+        sendAjax("{% url 'update_table_name' obj.id %}", {"old_name": old_name, "new_name": new_name},
+            function (data){
+                console.log(data);
+                if (!data.error){
+                    elem.empty().text(new_name);
+                }else{
+                    setAlertError("{% trans 'Error' %}", data.error);
+                }
+            },
+            {"load_elem": "#load", "method": "post"}
+        );
+    });
+    $(document).ready(function(){
+        $("#generate, #menu-personalize").addClass("active");
+        $('.collapse').collapse({
+          toggle: false
+        });
+        $(".btn-edit").on("click", function (e){
+            e.preventDefault();
+            var elem = $(this).parent().find("div.title-colapse > span");
+            var t = elem.text();
+            elem.empty().html('<form method="post"><input name="old_table_name" type="hidden" value="' + t + '" autofocus /><input name="table_name" type="text" value="' + t + '" autofocus /> <button type="submit" class="btn btn-success btn-save-edit">{% trans "Guardar" %}</button> <button type="submit" data-value="' + t +'" class="btn btn-default btn-cancel-edit">{% trans "Cancelar" %}</button></form>');
+            console.log(t);
+        });
+	});
+</script>
+{% endblock %}
