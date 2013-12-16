@@ -25,10 +25,24 @@ def upload(request):
 def personalize(request, id_db):
     if id_db:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
-        conn = DataBase(name=obj.db_name) #connection
-        tables = []
-        for t in conn.show_tables():
-            tables.append({"name": t, "columns": conn.show_fields(table=t)})
-        return render(request, "personalize.html", locals())
+        if obj:
+            conn = DataBase(name=obj.db_name) #connection
+            tables = []
+            for t in conn.show_tables():
+                tables.append({"name": t, "columns": conn.show_fields(table=t)})
+            return render(request, "personalize.html", locals())
+        else:
+            raise Http404
     else:
-        return Http404
+        raise Http404
+
+
+@login_required()
+def delete_table(request, id_db, table_name):
+    if id_db and table_name:
+        obj = DataBaseTmp.objects.get_or_none(id=id_db)
+        conn = DataBase(name=obj.db_name) #connection
+        conn.delete_table(table=table_name)
+        return redirect(reverse(personalize, args=(obj.id,)))
+    else:
+        raise Http404

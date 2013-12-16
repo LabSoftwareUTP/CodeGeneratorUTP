@@ -57,39 +57,4 @@ function setAlertError(t, m){
 function setAlertMessage(t, m){
     setAlert(t, m, '#alert-message');
 }
-function sendAjax(url, params, load_elem, myCallback){
-    // $(load_elem).show().html('<img src="/static/img/load16.gif" />');
-    $("#ac-load").fadeIn().html('<img src="/static/img/load.gif" />');
-    $.get(url, params, function(data,error) {
-            myCallback(data,error);
-            // $(load_elem).hide();
-            $("#ac-load").fadeOut();
-        }
-    );
-}
-function setDataTables(id_table){
-	var oTable = $(id_table).dataTable( {
-		"iDisplayLength": 30,
-        "aLengthMenu": [
-            [30, 100, 1000, -1],
-            [30, 100, 1000, "Todos"]
-        ],
-        "aaSorting": [],
-		"oLanguage": {
-			"sLengthMenu": "Mostrar _MENU_ registros",
-			"sZeroRecords": "No hay datos para mostrar",
-			"sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-			"sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-			"sInfoFiltered": "(filtro de _MAX_ registros en total)",
-			"sSearch": "_INPUT_",
-			"oPaginate": {
-                "sFirst": "Primera",
-                "sLast": "Ultima",
-                "sNext": "Siguiente",
-                "sPrevious": "Anterior"
-                },
-            },
-        } );
-    $("#usersList_filter > label > input").attr("placeholder", "Filtrar");
-}
 $(document).ready(main);

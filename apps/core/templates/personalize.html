@@ -12,7 +12,7 @@
                 <a data-toggle="collapse" data-parent="#accordionTables" href="#collapse-{{ forloop.counter0 }}">
                     {{ forloop.counter }}. {{ t.name.0 }}
                 </a>
-                <a href="#" class="pull-right"><span class="glyphicon glyphicon-trash"></span></a>
+                <a href="{% url 'del_table' obj.id t.name.0 %}" class="pull-right btn-delete"><span class="glyphicon glyphicon-trash"></span></a>
               </h4>
             </div>
             <div id="collapse-{{ forloop.counter0 }}" class="panel-collapse collapse">
@@ -51,7 +51,7 @@
                             </td>
                             <td>
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <a href="#" class=" btn-delete"><span class="glyphicon glyphicon-trash"></span></a>
                             </td>
                         </tr>
                             {% endfor %}
