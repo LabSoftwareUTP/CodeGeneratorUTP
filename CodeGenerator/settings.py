@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'apps.account',
     'apps.core',
     'captcha',
+    # 'sqlsql'
 )
 
 try:

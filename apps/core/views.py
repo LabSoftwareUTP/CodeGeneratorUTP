@@ -61,8 +61,13 @@ def inspectdb(request, id_db):
     if id_db:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
         if obj:
-            create_app(request.user, obj.filename, obj.db_name)
-            return redirect(reverse(personalize, args=(obj.id,)))
+            filename = create_app(request.user, obj.filename, obj.db_name)
+            print "EL ARCHIVO", filename
+            # response = HttpResponse(mimetype='application/zip')
+            # response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            # return response
+            # return redirect   (reverse(personalize, args=(obj.id,)))
+            return redirect(filename)
         else:
             raise Http404
     else:

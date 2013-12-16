@@ -109,6 +109,8 @@ class DataBase():
 import commands
 from django.template.defaultfilters import slugify
 from apps.inspectdb.management.commands import inspectdb
+import zipfile
+
 def create_app(user, app_name, db_name):
     app_name = slugify(app_name)
     app_path = "%s/%s/%s" % (settings.MEDIA_ROOT, str(user.id) + "-" + user.username, app_name)
@@ -133,4 +135,21 @@ def create_app(user, app_name, db_name):
     out = open("%s/models.py" % app_path, "w")
     inspectdb.Command().execute(stdout=out)
     commands.getoutput("mkdir %s/templates" % app_path)
-    print commands.getoutput("cp %s/apps/core/app_templates/* %s/templates/" % (settings.BASE_DIR, app_path))
+    commands.getoutput("cp %s/apps/core/app_templates/* %s/templates/" % (settings.BASE_DIR, app_path))
+    zip_app = compress_app(app_path, app_name, zfilename=app_name + ".zip")
+    # raise Exception
+    return  "%s%s-%s/%s.zip" % (settings.MEDIA_URL, str(user.id), user.username, app_name)
+
+
+def compress_app(app_path, app_name, zfilename='default.zip'): # 
+    zipf = zipfile.ZipFile(app_path + "/../" + zfilename, 'w')
+    zipdir(app_path , zipf)
+    zipf.close()
+    return zipf
+
+
+def zipdir(path, zip):
+    """Thanks to Mark Byers by http://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory-in-python"""
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            zip.write(os.path.join(root, file))
