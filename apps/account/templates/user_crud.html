@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n editinline %}
 {% block title %}Administraci&oacute;n de usuarios{% endblock %}
 {% block content %}
 <div class="panel panel-info">
@@ -17,7 +18,8 @@
 		<thead>
 		<tr>
 			<th>Nombre de usuario</th>
-			<th>Nombres/Apellidos</th>
+			<th>Nombres</th>
+			<th>Apellidos</th>
 			<th>Correo Electr&oacute;nico</th>
 			<th>Acciones</th>
 		</tr>
@@ -25,9 +27,12 @@
 		<tbody>
 		{% for u in users %}
 		<tr id="user{{ u.pk }}">
-			<td>{{ u.username }}</td>
+			<td>{% editinline "u.username" as un %}{{ un }}</td>
 			<td>
-			{{ u.get_full_name|title }}
+			{% editinline "u.first_name" as fname %}{{ fname|title }}
+			</td>
+			<td>
+			{% editinline "u.last_name" as lname %}{{ lname|title }}
 			</td>
 			<td>{{ u.email }}</td>
 			<td class="text-center actions">

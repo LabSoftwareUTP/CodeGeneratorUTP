@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load gravatartag i18n %}
+{% load gravatartag i18n editinline %}
 {% block title %}{% trans 'Cuenta de Usuario' %}{% endblock %}
 {% block content %}
 <div>
@@ -13,6 +13,7 @@
         </strong>
     </div>
     <hr>
+    {% editinline "user.username" as f %}{{f}}
     <div class="box-container">
         <form method="POST"  action="{% url 'update_personal_data' %}">
             {% csrf_token %}
