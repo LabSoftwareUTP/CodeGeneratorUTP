@@ -43,14 +43,18 @@ def exec_sql_file(user, sql_file):
             statement = statement + line
         else:  # when you get a line ending in ';' then exec statement and reset for next statement
             statement = statement + line
-            #print "\n\n[DEBUG] Executing SQL statement:\n%s" % (statement)
-            try:
-                db.cursor().execute(statement)
-            except (OperationalError, ProgrammingError) as e:
-                print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
-            except IntegrityError, e:
-                print "YA EXISTE ESA TABLA"
-
+            # print "\n\n[DEBUG] Executing SQL statement:\n%s" % (statement)
+            # if statement[0:11] != "CREATE TABLE":
+            if re.search(r'CREATE TABLE', statement):
+                print "SQL: %s...\n" % statement[0:20]
+                try:
+                    db.cursor().execute(statement)
+                except (OperationalError, ProgrammingError) as e:
+                    print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
+                except IntegrityError, e:
+                    print "YA EXISTE ESA TABLA", e
+            else:
+                print "NO SE EJECUTO: %s..." % statement[0:20]
             statement = ""
     return db_temp, path
 
@@ -65,6 +69,21 @@ class DataBase():
     def show_tables(self):
         self.cursor.execute("SHOW TABLES;")
         return self.cursor.fetchall()
+
+    def delete_table(self, table=None):
+        if table:
+            sql = "DROP TABLE IF EXISTS %s CASCADE;" % table
+            try:
+                print sql
+                self.cursor.execute(sql)
+                return self.cursor.fetchall()
+            except (OperationalError, ProgrammingError) as e:
+                print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
+
+            except IntegrityError, e:
+                print "\n[IntegrityError]", e
+        else:
+            return None
 
     def show_fields(self, table=None):
         if table:
