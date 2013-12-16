@@ -1,7 +1,11 @@
+# encoding:utf-8
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext as _
+import json
 from apps.core.forms import ImportSQLForm
 from apps.core.models import *
 from apps.core.utils import *
@@ -41,8 +45,37 @@ def personalize(request, id_db):
 def delete_table(request, id_db, table_name):
     if id_db and table_name:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
-        conn = DataBase(name=obj.db_name) #connection
-        conn.delete_table(table=table_name)
-        return redirect(reverse(personalize, args=(obj.id,)))
+        if obj:
+            conn = DataBase(name=obj.db_name) #connection
+            conn.delete_table(table=table_name)
+            return redirect(reverse(personalize, args=(obj.id,)))
+        else:
+            raise Http404
+    else:
+        raise Http404
+
+
+@login_required()
+def update_table_name(request, id_db):
+    if request.is_ajax() and id_db:
+        if request.method == "POST":
+            old_name = request.POST.get("old_name") if "old_name" in request.POST else False
+            new_name = request.POST.get("new_name") if "new_name" in request.POST else False
+            if old_name and new_name:
+                obj = DataBaseTmp.objects.get_or_none(id=id_db)
+                if obj:
+                    conn = DataBase(name=obj.db_name) #connection
+                    r = conn.rename_table(old_name=old_name, new_name=new_name)
+                    if "error" in r:
+                        response = {"error": r['error']}
+                    else:
+                        response = {"saved": True}
+                else:
+                    response = {"error": _("Error, la base de datos no existe")}
+            else:
+                response = {"error": _("Error, no hay un nombre para cambiar")}
+        else:
+            response = {"error": _(u"No es posible servir esta petición")}
+        return HttpResponse(json.dumps(response), mimetype="application/json")
     else:
         raise Http404

@@ -7,6 +7,7 @@ general_urls = patterns('apps.core.views',
 
 sql_urls = patterns('apps.core.views',
     url(r'^db/(?P<id_db>[0-9]+)/del-table/(?P<table_name>[\w]+)$', 'delete_table', name="del_table"),
+    url(r'^db/(?P<id_db>[0-9]+)/update-table-name/$', 'update_table_name', name="update_table_name"),
 )
 
 core_urls = general_urls + sql_urls

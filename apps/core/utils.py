@@ -85,6 +85,19 @@ class DataBase():
         else:
             return None
 
+    def rename_table(self, old_name=None, new_name=None):
+        if old_name and new_name:
+            sql = "RENAME TABLE %s TO %s;" % (old_name, new_name)
+            try:
+                print sql
+                self.cursor.execute(sql)
+                return self.cursor.fetchall()
+            except (OperationalError, ProgrammingError) as e:
+                print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
+                return {"error": "[WARN] MySQLError during execute statement: Args: '%s'" % (str(e.args))}
+        else:
+            return {}
+
     def show_fields(self, table=None):
         if table:
             self.cursor.execute("DESCRIBE %s;" % table)
