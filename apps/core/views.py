@@ -62,7 +62,7 @@ def inspectdb(request, id_db):
     if id_db:
         obj = DataBaseTmp.objects.get_or_none(id=id_db)
         if obj:
-            filename = create_app(request.user, obj.filename, obj.db_name)
+            filename = create_app(request.user, obj.filename.split(".")[0], obj.db_name)
             return redirect(settings.MEDIA_URL + filename)
         else:
             raise Http404

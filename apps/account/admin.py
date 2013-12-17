@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.db.models import get_app, get_models
 
-from apps.account.models import *
+app = get_app('account')
 
-admin.site.register(activation_keys)  # aca registramos nuestro modelo con el admin de django
+for model in get_models(app):
+	admin.site.register(model)

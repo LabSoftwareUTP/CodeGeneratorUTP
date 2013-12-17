@@ -14,7 +14,7 @@ DB_USER_PASSWD = settings.MYSQL_PASSWD
 def create_db(user):
     db1 = MySQLdb.connect(host="localhost",user=DB_USER,passwd=DB_USER_PASSWD)
     cursor = db1.cursor()
-    db_name = 'tmp_db_%s_%s' % (user.username, datetime.datetime.now().strftime("%Y_%m_%d_%H_%M"))
+    db_name = 'tmp_db_%s_%s' % (user.username, datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%s"))
     sql = "CREATE DATABASE %s;" % (db_name)
     try:
         cursor.execute(sql)
@@ -53,8 +53,8 @@ def exec_sql_file(user, sql_file):
                     print "\n[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args))
                 except IntegrityError, e:
                     print "YA EXISTE ESA TABLA", e
-            else:
-                print "NO SE EJECUTO: %s..." % statement[0:20]
+            # else:
+            #     print "NO SE EJECUTO: %s..." % statement[0:20]
             statement = ""
     return db_temp, path
 
@@ -88,9 +88,22 @@ def create_app(user, app_name, db_name):
     models = open("%s/models.py" % app_path, "w")
     inspectdb.Command().execute(stdout=models)
     models.close()
+
+    readme = open("%s/admin.py" % app_path, "w")
+    text = u"from django.contrib import admin\nfrom django.db.models import get_app, get_models\n\napp = get_app('%s')\n\nfor model in get_models(app):\n\tadmin.site.register(model)" % (app_name)
+    readme.write(text)
+    readme.close()
+
+    readme = open("%s/README.MD" % app_path, "w")
+    text = u"#Instalation\n\nadd `%s` to your INSTALED_APPS var\n\nadd to you urls:\n\n\tfrom %s.urls import general_urls as %s_urls\n\n\t...\n\n\turl(r'^%s/', include(%s_urls)),\n\n\nThen, now you can to sync your proyect\n\n\tpython manage.py syncdb" % (app_name, app_name, app_name, app_name, app_name)
+    readme.write(text)
+    readme.close()
+
     commands.getoutput("mkdir %s/templates" % app_path)
     commands.getoutput("cp %s/apps/core/app_templates/* %s/templates/" % (settings.BASE_DIR, app_path))
+
     zip_app = compress_app(app_path, app_name, zfilename=app_name + ".zip")
+
     return  "%s-%s/%s.zip" % (str(user.id), user.username, app_name)
 
 
