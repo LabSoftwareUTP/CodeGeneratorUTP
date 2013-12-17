@@ -11,13 +11,13 @@ def home(request):
 
 
 def update(request):
-	os.chdir(os.path.dirname(os.path.dirname(__file__)))
+    os.chdir(os.path.dirname(os.path.dirname(__file__)))
     gitpull = commands.getstatusoutput('git pull origin master')[1]
     return HttpResponse("<pre>"+gitpull+"</pre><br><a href='" + reverse(reload) + "'>Reload Nginx</a>")
 
 
 def reload(request):
-	os.chdir(os.path.dirname(os.path.dirname(__file__)))
+    os.chdir(os.path.dirname(os.path.dirname(__file__)))
     out = commands.getstatusoutput("ps -Af | grep uwsgi | grep -v grep | awk '{ print $2 }' | xargs kill")[1]
     out = out + commands.getstatusoutput("echo Stopped... please wait")[1]
     out = out + commands.getstatusoutput("sleep 1")[1]
