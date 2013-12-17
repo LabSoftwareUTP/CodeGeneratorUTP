@@ -14,9 +14,13 @@ def home(request):
 
 
 def update(request):
-    os.chdir(os.path.dirname(os.path.dirname(__file__)))
-    gitpull = commands.getstatusoutput('git pull origin master')[1]
-    return HttpResponse("<pre>"+gitpull+"</pre><br><a href='" + reverse(reload) + "'>Reload Nginx</a>")
+    try:
+        os.chdir(os.path.dirname(os.path.dirname(__file__)))
+        out = commands.getstatusoutput('git pull origin master')[1]
+    except Exception, e:
+        print e
+        out = "[Exception]: %s" % e
+    return HttpResponse("<pre>"+out+"</pre><br><a href='" + reverse(reload) + "'>Reload Nginx</a>")
 
 
 def reload(request):
