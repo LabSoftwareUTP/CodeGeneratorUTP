@@ -8,6 +8,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'apps.website.views.home', name='home'),
+    url(r'^update$', 'apps.website.views.update', name='update'),
+    url(r'^reload$', 'apps.website.views.reload', name='reload'),
     url(r'^code/', include(core_urls)),
     url(r'^account/', include(aurls)),
     url(r'^captcha/', include('captcha.urls')),
