@@ -11,6 +11,19 @@ DB_USER = settings.MYSQL_USER
 DB_USER_PASSWD = settings.MYSQL_PASSWD
 
 
+
+VIEW_TEMPLATE = '''# encoding:utf-8
+from django.shortcuts import render
+def home(request):
+    app_name = '{app_name}'
+    return render(request, '{app_name}/index.html', locals())
+
+'''
+
+
+def sformat(cad, **kw):
+    return cad.format(**kw)
+
 def create_db(user):
     db1 = MySQLdb.connect(host="localhost",user=DB_USER,passwd=DB_USER_PASSWD)
     cursor = db1.cursor()
@@ -64,6 +77,14 @@ from django.template.defaultfilters import slugify
 from apps.inspectdb.management.commands import inspectdb
 import zipfile
 
+
+def fnc(name):
+    x = open(name,'r').read()
+    x = x.replace("=0L", "=1L")
+    with open(name,'w') as f:
+        f.write(x)
+
+
 def create_app(user, app_name, db_name):
     app_name = slugify(app_name)
     app_path = "%s/%s/%s" % (settings.MEDIA_ROOT, str(user.id) + "-" + user.username, app_name)
@@ -71,7 +92,7 @@ def create_app(user, app_name, db_name):
     settings.DATABASES['mysql'] = {'ENGINE': 'django.db.backends.mysql','NAME': db_name,'USER': DB_USER,'PASSWORD': DB_USER_PASSWD}
     
     print "Creando app en %s" % app_path
-    commands.getoutput("mkdir %s" % app_path)
+    commands.getoutput("mkdir -p %s" % app_path)
     init = open("%s/__init__.py" % app_path, "w")
     init.close()
 
@@ -81,26 +102,30 @@ def create_app(user, app_name, db_name):
     urls.close()
     
     views = open("%s/views.py" % app_path, "w")
-    text = "# encoding:utf-8\nfrom django.shortcuts import render\n\ndef home(request):\n\treturn render(request, 'index.html', locals())\n"
+    text = sformat(VIEW_TEMPLATE,app_name=app_name)
     views.write(text)
     views.close()
 
     models = open("%s/models.py" % app_path, "w")
     inspectdb.Command().execute(stdout=models)
     models.close()
+    fnc("%s/models.py" % app_path)
 
     readme = open("%s/admin.py" % app_path, "w")
-    text = u"from django.contrib import admin\nfrom django.db.models import get_app, get_models\n\napp = get_app('%s')\n\nfor model in get_models(app):\n\tadmin.site.register(model)" % (app_name)
+    text = u"from django.contrib import admin\nfrom django.db.models import get_app, get_models \n\napp = get_app('%s') \n\nfor model in get_models(app): \n\tadmin.site.register(model)" % (app_name)
     readme.write(text)
     readme.close()
 
     readme = open("%s/README.MD" % app_path, "w")
-    text = u"#Instalation\n\nadd `%s` to your INSTALED_APPS var\n\nadd to you urls:\n\n\tfrom %s.urls import general_urls as %s_urls\n\n\t...\n\n\turl(r'^%s/', include(%s_urls)),\n\n\nThen, now you can to sync your proyect\n\n\tpython manage.py syncdb" % (app_name, app_name, app_name, app_name, app_name)
+    text = u"#Instalation\n\nadd `{appname}` to your INSTALED_APPS var\n\nadd to you urls:\n\n\tfrom {appname}.urls import general_urls as {appname}_urls\n\n\t...\n\n\turl(r'^{appname}/', include({appname}_urls)),\n\n\nThen, now you can to sync your proyect\n\n\tpython manage.py syncdb".format(appname=app_name)
     readme.write(text)
     readme.close()
-
-    commands.getoutput("mkdir %s/templates" % app_path)
-    commands.getoutput("cp %s/apps/core/app_templates/* %s/templates/" % (settings.BASE_DIR, app_path))
+    orden= "mkdir -p {apppath}/templates/{appname} ".format(apppath=app_path,appname=app_name)
+    print orden
+    commands.getoutput(orden)
+    copiar = "cp {base}/apps/core/app_templates/* {apppath}/templates/{appname}".format(base=settings.BASE_DIR, apppath=app_path, appname=app_name)
+    print copiar
+    commands.getoutput(copiar)
 
     zip_app = compress_app(app_path, app_name, zfilename=app_name + ".zip")
 
